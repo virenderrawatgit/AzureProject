@@ -1,0 +1,19 @@
+Design and deploy a multi-region, multi-tier application in Azure where front-end, application, and database tiers are placed in separate VNets, and VNet peering is used to enable secure, low-latency communication across VNets and regions.
+Create 3 vNET in 2 Region.
+EastUS Region
+  DBServervNET    
+    dbSubnet01  50.0.10.0/24
+    Create 2 VMs and connect this subnet. Create a DB Server and connect with dbSubnet01; create a NVA Server and connect with dbSubnet01.
+
+    
+India Region
+  webSevervNET
+      subnetWEB01    30.0.10.0/24
+  frontEndvNET
+    subnetFront01      20.0.10.0/24
+
+
+1) Create vnet peering between webServervNET to frontEndvNET
+2) Create vnet peering between frontendvnet to DBServervnet.
+3) Create UDR and added the destion 50.0.10.0/24
+4) Attach subnet with frontendvnet in UDR
