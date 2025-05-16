@@ -17,3 +17,5 @@ India Region
 2) Create vnet peering between frontendvnet to DBServervnet.
 3) Create UDR and added the destion 50.0.10.0/24
 4) Attach subnet with frontendvnet in UDR
+
+
