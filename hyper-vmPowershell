@@ -1,42 +1,41 @@
 This script create hyper-v VM 
 
-  # Define variables
-$VMName = "FileServer01"
+# Define variables
+$VMName = "DC01"
 $VMPath = "C:\VM\$VMName"
 $VHDPath = "$VMPath\$VMName.vhdx"
 $VHDSizeGB = 100
 $VHDSizeBytes = $VHDSizeGB * 1GB
 $MemoryStartupBytes = 4GB
 $ProcessorCount = 2
-$SwitchName = "InternalNAT"  # Change if needed
-$ISOPath = "C:\ISO\2019.iso"    # Windows Server ISO
+$SwitchName = "InternalNAT"  # Change as needed
+$ISOPath = "C:\ISO\2019.iso"    # Optional boot ISO
 
 # Create VM folder
 New-Item -Path $VMPath -ItemType Directory -Force
 
-# Create VHD
+# Create virtual hard disk
 New-VHD -Path $VHDPath -SizeBytes $VHDSizeBytes -Dynamic
 
-# Create Gen2 VM
+# Create the VM
 New-VM -Name $VMName -MemoryStartupBytes $MemoryStartupBytes -Generation 2 `
        -VHDPath $VHDPath -Path $VMPath -SwitchName $SwitchName
 
 # Set processor count
 Set-VMProcessor -VMName $VMName -Count $ProcessorCount
 
-# Mount ISO
+# Add DVD drive and mount ISO (optional)
 Add-VMDvdDrive -VMName $VMName -Path $ISOPath
 
-# Set CD/DVD as first boot device
-$firmware = Get-VMFirmware -VMName $VMName
-$cdBoot = $firmware.BootOrder | Where-Object { $_.Device -eq "CD" }
-$hddBoot = $firmware.BootOrder | Where-Object { $_.Device -eq "HardDrive" }
-Set-VMFirmware -VMName $VMName -FirstBootDevice $cdBoot, $hddBoot
+# Set boot order (CD first, then hard drive)
+$cdDrive = Get-VMFirmware -VMName $VMName | Select-Object -ExpandProperty BootOrder | Where-Object { $_.Device -eq "CD" }
+Set-VMFirmware -VMName $VMName -FirstBootDevice $cdDrive
 
 # Start the VM
 Start-VM -Name $VMName
 
-Write-Host "VM '$VMName' created and configured with CD/DVD as the first boot device."
+Write-Host "VM '$VMName' created and started successfully."
+
 
 
 
