@@ -1,0 +1,43 @@
+This script create hyper-v VM 
+
+  # Define variables
+$VMName = "FileServer01"
+$VMPath = "C:\VM\$VMName"
+$VHDPath = "$VMPath\$VMName.vhdx"
+$VHDSizeGB = 100
+$VHDSizeBytes = $VHDSizeGB * 1GB
+$MemoryStartupBytes = 4GB
+$ProcessorCount = 2
+$SwitchName = "InternalNAT"  # Change if needed
+$ISOPath = "C:\ISO\2019.iso"    # Windows Server ISO
+
+# Create VM folder
+New-Item -Path $VMPath -ItemType Directory -Force
+
+# Create VHD
+New-VHD -Path $VHDPath -SizeBytes $VHDSizeBytes -Dynamic
+
+# Create Gen2 VM
+New-VM -Name $VMName -MemoryStartupBytes $MemoryStartupBytes -Generation 2 `
+       -VHDPath $VHDPath -Path $VMPath -SwitchName $SwitchName
+
+# Set processor count
+Set-VMProcessor -VMName $VMName -Count $ProcessorCount
+
+# Mount ISO
+Add-VMDvdDrive -VMName $VMName -Path $ISOPath
+
+# Set CD/DVD as first boot device
+$firmware = Get-VMFirmware -VMName $VMName
+$cdBoot = $firmware.BootOrder | Where-Object { $_.Device -eq "CD" }
+$hddBoot = $firmware.BootOrder | Where-Object { $_.Device -eq "HardDrive" }
+Set-VMFirmware -VMName $VMName -FirstBootDevice $cdBoot, $hddBoot
+
+# Start the VM
+Start-VM -Name $VMName
+
+Write-Host "VM '$VMName' created and configured with CD/DVD as the first boot device."
+
+
+
+  # once you run this script so it will create the VM as per name given by user. you need to change the boot order as per it will select the hard disk.. you need to change to CD Drive and install the os
