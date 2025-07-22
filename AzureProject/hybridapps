@@ -1,1 +1,19 @@
+*Project Title:
+Hybrid Multi-Tier Web Application with Cross-Region Redundancy and Secure Storage
 
+*Project Scenario (Use Case):
+You are building a globally accessible e-commerce platform for a company that has:
+A primary Azure region in India (Central India)
+A secondary DR site in Southeast Asia (Singapore)
+A head office with on-premises infrastructure that needs to securely connect to Azure
+Users accessing from various regions
+A need for high availability, redundancy, load balancing, and secure storage for media and logs
+
+*Technologies Covered:
+Technology	Usage in Project
+VNet	Separate VNets for Web, App, and DB tiers
+VNet Peering	Connect VNets across tiers and regions
+Site-to-Site VPN	Connect on-premises DC to Azure
+Azure Load Balancer	Distribute traffic across VM web servers
+App Gateway (ALB)	SSL termination + web routing rules
+Azure Storage	Store product images, logs, and backups securely
